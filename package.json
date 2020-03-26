@@ -1,0 +1,33 @@
+{
+  "name": "gatsby-source-opml",
+  "version": "1.0.0",
+  "description": "Gatsby source plugin allowing to read OPML files.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Smoczysko/gatsby-source-opml.git"
+  },
+  "keywords": [
+    "gatsby",
+    "gatsbyjs",
+    "ompl"
+  ],
+  "author": "Łukasz Rybka",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Smoczysko/gatsby-source-opml/issues"
+  },
+  "homepage": "https://github.com/Smoczysko/gatsby-source-opml#readme",
+  "scripts": {
+    "format": "prettier --write \"./**/*.{js,jsx}\""
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.0",
+    "striptags": "^3.1.1",
+    "uuid": "^7.0.2",
+    "xml2json": "^0.12.0"
+  },
+  "devDependencies": {
+    "prettier": "^1.19.1"
+  }
+}
