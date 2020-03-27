@@ -75,6 +75,7 @@ const processPodcastContent = async podcast => {
       description: stripTags(podcastData.description || ""),
       docs: podcastData.docs || "",
       language: podcastData.language || "",
+      author: podcastData["itunes:author"] || "",
       image,
     }
   } catch (_) {
