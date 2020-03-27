@@ -9,8 +9,12 @@
   },
   "keywords": [
     "gatsby",
+    "gatsby-plugin",
+    "gatsby-source-opml",
     "gatsbyjs",
-    "ompl"
+    "opml",
+    "podcast",
+    "podcasts"
   ],
   "author": "Łukasz Rybka",
   "license": "MIT",
