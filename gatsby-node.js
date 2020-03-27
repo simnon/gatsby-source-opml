@@ -14,11 +14,11 @@ const processImage = async image => {
     }
 
     const response = await fetch(image.url)
-    const base64 = await response.buffer().toString("base64")
+    const content = await response.buffer()
 
     resolve({
       url: image.url,
-      base64,
+      base64: content.toString("base64"),
     })
   })
 }
@@ -62,7 +62,7 @@ const processPodcastContent = async podcast => {
     const data = await response.text()
     const json = xmlParser.toJson(data, { object: true })
 
-    if (!json || !json.rss || !json.rss.channel || !json.rss.channel.text) {
+    if (!json || !json.rss || !json.rss.channel || !json.rss.channel.title) {
       return null
     }
 
@@ -70,7 +70,7 @@ const processPodcastContent = async podcast => {
     const image = await processImage(podcastData.image)
 
     return {
-      name: podcastData.text,
+      name: podcastData.title,
       url: podcastData.link || "",
       description: stripTags(podcastData.description || ""),
       docs: podcastData.docs || "",
