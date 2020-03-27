@@ -5,6 +5,24 @@ const uuid = require("uuid")
 const fetch = require("node-fetch")
 const stripTags = require("striptags")
 
+const processImage = async image => {
+  return new Promise(async (resolve, reject) => {
+    if (!image || !image.url) {
+      resolve(null)
+
+      return
+    }
+
+    const response = await fetch(image.url)
+    const base64 = await response.buffer().toString("base64")
+
+    resolve({
+      url: image.url,
+      base64,
+    })
+  })
+}
+
 exports.sourceNodes = async (
   { actions, createNodeId, createContentDigest },
   configOptions
@@ -18,6 +36,11 @@ exports.sourceNodes = async (
   for (const podcast of podcasts) {
     const nodeId = createNodeId(`opml-podcast-${uuid.v4()}`)
     const nodeContent = await processPodcastContent(podcast)
+
+    if (!nodeContent) {
+      continue
+    }
+
     const nodeData = Object.assign({}, nodeContent, {
       id: nodeId,
       parent: null,
@@ -34,18 +57,28 @@ exports.sourceNodes = async (
 }
 
 const processPodcastContent = async podcast => {
-  const response = await fetch(podcast.xmlUrl)
-  const data = await response.text()
-  const json = xmlParser.toJson(data, { object: true })
+  try {
+    const response = await fetch(podcast.xmlUrl)
+    const data = await response.text()
+    const json = xmlParser.toJson(data, { object: true })
 
-  console.log(`${podcast.text}: ${json.rss.channel.copyright}`)
+    if (!json || !json.rss || !json.rss.channel || !json.rss.channel.text) {
+      return null
+    }
 
-  return {
-    name: podcast.text,
-    url: json.rss.channel.link,
-    description: stripTags(json.rss.channel.description),
-    docs: json.rss.channel.docs,
-    language: json.rss.channel.language,
+    const podcast = json.rss.channel
+    const image = await processImage(podcast.image)
+
+    return {
+      name: podcast.text,
+      url: podcast.link || "",
+      description: stripTags(podcast.description || ""),
+      docs: podcast.docs || "",
+      language: podcast.language || "",
+      image,
+    }
+  } catch (_) {
+    return null
   }
 }
 
