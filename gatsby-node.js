@@ -66,15 +66,15 @@ const processPodcastContent = async podcast => {
       return null
     }
 
-    const podcast = json.rss.channel
-    const image = await processImage(podcast.image)
+    const podcastData = json.rss.channel
+    const image = await processImage(podcastData.image)
 
     return {
-      name: podcast.text,
-      url: podcast.link || "",
-      description: stripTags(podcast.description || ""),
-      docs: podcast.docs || "",
-      language: podcast.language || "",
+      name: podcastData.text,
+      url: podcastData.link || "",
+      description: stripTags(podcastData.description || ""),
+      docs: podcastData.docs || "",
+      language: podcastData.language || "",
       image,
     }
   } catch (_) {
