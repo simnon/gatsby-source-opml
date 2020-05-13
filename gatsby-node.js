@@ -68,10 +68,12 @@ const processPodcastContent = async podcast => {
 
     const podcastData = json.rss.channel
     const image = await processImage(podcastData.image)
+    const podcastUrl =
+      typeof podcastData.link === "string" ? podcastData.link : ""
 
     return {
       name: podcastData.title,
-      url: podcastData.link || "",
+      url: podcastUrl,
       description: stripTags(podcastData.description || ""),
       docs: podcastData.docs || "",
       language: podcastData.language || "",
