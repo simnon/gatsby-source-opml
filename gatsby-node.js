@@ -5,11 +5,8 @@ const uuid = require("uuid")
 const fetch = require("node-fetch")
 const stripTags = require("striptags")
 
-exports.sourceNodes = async (
-  commands,
-  configOptions
-) => {
-  await createPodcastsDataSource(commands , configOptions)
+exports.sourceNodes = async (commands, configOptions) => {
+  await createPodcastsDataSource(commands, configOptions)
   await createPodcastEpisodesSource(commands, configOptions)
 }
 
@@ -19,10 +16,10 @@ const createPodcastEpisodesSource = async (
 ) => {
   const { createNode } = actions
   const podcasts = await readPodcastsListFromFile(configOptions.file)
-  
+
   for (const podcast of podcasts) {
     const podcastTitle = podcast.title
-    const episodes = flatten(podcast.outline).filter( n => n)
+    const episodes = flatten(podcast.outline).filter((n) => n)
 
     for (const episode of episodes) {
       const nodeId = createNodeId(`opml-podcast-episode-${uuid.v4()}`)
@@ -60,7 +57,7 @@ const createPodcastsDataSource = async (
   for (const podcast of podcasts) {
     const nodeId = createNodeId(`opml-podcast-${uuid.v4()}`)
     const nodeContent = await processPodcastContent(podcast)
-    
+
     if (!nodeContent) {
       continue
     }
@@ -88,15 +85,15 @@ const processEpisodeContent = async (podcast, episode) => {
       publishDate: episode.pubDate,
       episodeData: episode.enclosureUrl,
       playedCount: parseInt(episode.played) ?? 0,
-      favorited: (episode.userRecommendedDate !== undefined | null) ? true : false, 
+      favorited: episode.userRecommendedDate | null ? true : false,
     }
   } catch (_) {
-    console.error('failed to parse episode content')
+    console.error("failed to parse episode content")
     return null
   }
 }
 
-const processPodcastContent = async podcast => {
+const processPodcastContent = async (podcast) => {
   try {
     const response = await fetch(podcast.xmlUrl)
     const data = await response.text()
@@ -125,7 +122,7 @@ const processPodcastContent = async podcast => {
   }
 }
 
-const processImage = async image => {
+const processImage = async (image) => {
   return new Promise(async (resolve, reject) => {
     if (!image || !image.url) {
       resolve(null)
@@ -146,19 +143,19 @@ const processImage = async image => {
 function isIterable(obj) {
   // checks for null and undefined
   if (obj == null) {
-    return false;
+    return false
   }
-  return typeof obj[Symbol.iterator] === 'function';
+  return typeof obj[Symbol.iterator] === "function"
 }
 
 function flatten(arr) {
   if (isIterable(arr)) {
-    return ([].concat(...arr))
+    return [].concat(...arr)
   }
   return [arr]
 }
 
-const readPodcastsListFromFile = async filePath => {
+const readPodcastsListFromFile = async (filePath) => {
   return new Promise((resolve, reject) => {
     fs.readFile(path.join(__dirname, "../..", filePath), (error, data) => {
       if (error) {
@@ -169,7 +166,11 @@ const readPodcastsListFromFile = async filePath => {
 
       const json = xmlParser.toJson(data, { object: true })
       var flattenedFeeds = flatten(json.opml.body.outline)
-      const podcasts = flattenedFeeds.flatMap(feed => { return feed.outline }).filter( n => n)
+      const podcasts = flattenedFeeds
+        .flatMap((feed) => {
+          return feed.outline
+        })
+        .filter((n) => n)
       resolve(podcasts)
     })
   })

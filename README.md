@@ -2,6 +2,10 @@
 
 Gatsby source plugin exposing content of [OPML file](https://en.wikipedia.org/wiki/OPML) as GraphQL resource.
 
+Two types of queries 
+Podcast data using `allOpmlPodcast`
+Podcast episode data using `allOpmlPodcastEpisodes`
+
 ## Install
 
 `npm install --save gatsby-source-opml`
@@ -28,15 +32,31 @@ module.exports = {
 ## How to query
 
 ```graphql
-allOpmlPodcast {
-  edges {
-    node {
-      id
-      name
-      description
-      url
-      image {
+query RetrieveAllPodcasts {
+  allOpmlPodcast {
+    edges {
+      node {
+        id
+        name
+        description
         url
+        image {
+          url
+        }
+      }
+    }
+  }
+}
+
+query FavoritedPodcastEpisodes {
+  allOpmlPodcastEpisodes(filter: {favorited: {eq: true}}) {
+    edges {
+      node {
+        podcastTitle
+        episodeData
+        name
+        favorited
+        publishDate
       }
     }
   }

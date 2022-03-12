@@ -1,7 +1,7 @@
 {
-  "name": "gatsby-source-opml",
-  "version": "1.0.5",
-  "description": "Gatsby source plugin allowing to read OPML files.",
+  "name": "gatsby-source-opml-overcast",
+  "version": "1.0.0",
+  "description": "Gatsby source plugin allowing to read OPML files from Overcast",
   "main": "gatsby-node.js",
   "repository": {
     "type": "git",
@@ -10,18 +10,19 @@
   "keywords": [
     "gatsby",
     "gatsby-plugin",
+    "gatsby-source-opml-overcast",
     "gatsby-source-opml",
     "gatsbyjs",
     "opml",
     "podcast",
     "podcasts"
   ],
-  "author": "Łukasz Rybka",
+  "author": "Łukasz Rybka, Simon Coulter",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Smoczysko/gatsby-source-opml/issues"
+    "url": "https://github.com/simnon/gatsby-source-opml-overcast/issues"
   },
-  "homepage": "https://github.com/Smoczysko/gatsby-source-opml#readme",
+  "homepage": "https://github.com/simnon/gatsby-source-opml-overcast#readme",
   "scripts": {
     "format": "prettier --write \"./**/*.{js,jsx}\""
   },
