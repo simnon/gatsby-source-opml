@@ -24,6 +24,52 @@ const processImage = async image => {
 }
 
 exports.sourceNodes = async (
+  commands,
+  configOptions
+) => {
+  await createPodcastsDataSource(commands , configOptions)
+  await createPodcastEpisodesSource(commands, configOptions)
+}
+
+const createPodcastEpisodesSource = async (
+  { actions, createNodeId, createContentDigest },
+  configOptions
+) => {
+  const { createNode } = actions
+
+  // delete configOptions.plugins
+
+  const podcasts = await readPodcastsListFromFile(configOptions.file)
+  
+  for (const podcast of podcasts) {
+    const podcastTitle = podcast.title
+    const episodes = flatten(podcast.outline).filter( n => n)
+
+    for (const episode of episodes) {
+      const nodeId = createNodeId(`opml-podcast-episode-${uuid.v4()}`)
+      const episodeNodeContent = await processEpisodeContent(podcast, episode)
+      if (!episodeNodeContent) {
+        console.error('No Episode Content') 
+        continue
+      }
+
+      const nodeData = Object.assign({}, episodeNodeContent, {
+        id: nodeId,
+        parent: null,
+        children: [],
+        internal: {
+          type: `OpmlPodcastEpisodes`,
+          content: JSON.stringify(episodeNodeContent),
+          contentDigest: createContentDigest(episodeNodeContent),
+        },
+      })
+
+      createNode(nodeData)
+    }
+  }
+}
+
+const createPodcastsDataSource = async (
   { actions, createNodeId, createContentDigest },
   configOptions
 ) => {
@@ -36,7 +82,7 @@ exports.sourceNodes = async (
   for (const podcast of podcasts) {
     const nodeId = createNodeId(`opml-podcast-${uuid.v4()}`)
     const nodeContent = await processPodcastContent(podcast)
-
+    
     if (!nodeContent) {
       continue
     }
@@ -53,6 +99,23 @@ exports.sourceNodes = async (
     })
 
     createNode(nodeData)
+  }
+}
+
+const processEpisodeContent = async (podcast, episode) => {
+  console.log('pod: ' + podcast.text + "ep: " + JSON.stringify(episode,null,2))
+  try {
+    return {
+      name: episode.title,
+      podcastTitle: podcast.title,
+      publishDate: episode.pubDate,
+      episodeData: episode.enclosureUrl,
+      playedCount: episode.played ?? 0,
+      favorited: (episode.userRecommendedDate !== undefined | null) ? true : false, 
+    }
+  } catch (_) {
+    console.error('failed to parse episode content')
+    return null
   }
 }
 
@@ -85,6 +148,22 @@ const processPodcastContent = async podcast => {
   }
 }
 
+
+function isIterable(obj) {
+  // checks for null and undefined
+  if (obj == null) {
+    return false;
+  }
+  return typeof obj[Symbol.iterator] === 'function';
+}
+
+function flatten(arr) {
+  if (isIterable(arr)) {
+    return ([].concat(...arr))
+  }
+  return [arr]
+}
+
 const readPodcastsListFromFile = async filePath => {
   return new Promise((resolve, reject) => {
     fs.readFile(path.join(__dirname, "../..", filePath), (error, data) => {
@@ -95,8 +174,9 @@ const readPodcastsListFromFile = async filePath => {
       }
 
       const json = xmlParser.toJson(data, { object: true })
-
-      resolve(json.opml.body.outline.outline)
+      var flattenedFeeds = flatten(json.opml.body.outline)
+      const podcasts = flattenedFeeds.flatMap(feed => { return feed.outline }).filter( n => n)
+      resolve(podcasts)
     })
   })
 }

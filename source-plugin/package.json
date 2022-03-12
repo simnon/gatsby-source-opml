@@ -2,7 +2,7 @@
   "name": "gatsby-source-opml",
   "version": "1.0.5",
   "description": "Gatsby source plugin allowing to read OPML files.",
-  "main": "index.js",
+  "main": "gatsby-node.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Smoczysko/gatsby-source-opml.git"
