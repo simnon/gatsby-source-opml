@@ -81,14 +81,13 @@ const createPodcastsDataSource = async (
 }
 
 const processEpisodeContent = async (podcast, episode) => {
-  console.log('pod: ' + podcast.text + "ep: " + JSON.stringify(episode,null,2))
   try {
     return {
       name: episode.title,
       podcastTitle: podcast.title,
       publishDate: episode.pubDate,
       episodeData: episode.enclosureUrl,
-      playedCount: episode.played ?? 0,
+      playedCount: parseInt(episode.played) ?? 0,
       favorited: (episode.userRecommendedDate !== undefined | null) ? true : false, 
     }
   } catch (_) {
