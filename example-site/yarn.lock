@@ -5051,10 +5051,6 @@ gatsby-sharp@^0.3.0:
     "@types/sharp" "^0.29.5"
     sharp "^0.30.1"
 
-"gatsby-source-opml@link:../gatsby-source-opml":
-  version "0.0.0"
-  uid ""
-
 gatsby-telemetry@^3.9.1:
   version "3.9.1"
   resolved "https://registry.yarnpkg.com/gatsby-telemetry/-/gatsby-telemetry-3.9.1.tgz#3c20c7e0cb363ccaae41fb581ab289330b5d7f69"

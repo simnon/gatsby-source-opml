@@ -6,10 +6,10 @@
 
 module.exports = {
   plugins: [{
-      resolve: require.resolve(`../source-plugin`),
+      resolve: require.resolve(`../`),
       options: {
         // Url to opml file, relative to project root directory
-        file: `gatsby-source-opml/example-site/data/overcast.opml`,
+        file: `projects/gatsby-source-opml/example-site/data/overcast.opml`,
         name: `opml`,
       },
     }],
