@@ -5,24 +5,6 @@ const uuid = require("uuid")
 const fetch = require("node-fetch")
 const stripTags = require("striptags")
 
-const processImage = async image => {
-  return new Promise(async (resolve, reject) => {
-    if (!image || !image.url) {
-      resolve(null)
-
-      return
-    }
-
-    const response = await fetch(image.url)
-    const content = await response.buffer()
-
-    resolve({
-      url: image.url,
-      base64: content.toString("base64"),
-    })
-  })
-}
-
 exports.sourceNodes = async (
   commands,
   configOptions
@@ -36,9 +18,6 @@ const createPodcastEpisodesSource = async (
   configOptions
 ) => {
   const { createNode } = actions
-
-  // delete configOptions.plugins
-
   const podcasts = await readPodcastsListFromFile(configOptions.file)
   
   for (const podcast of podcasts) {
@@ -49,7 +28,6 @@ const createPodcastEpisodesSource = async (
       const nodeId = createNodeId(`opml-podcast-episode-${uuid.v4()}`)
       const episodeNodeContent = await processEpisodeContent(podcast, episode)
       if (!episodeNodeContent) {
-        console.error('No Episode Content') 
         continue
       }
 
@@ -148,6 +126,23 @@ const processPodcastContent = async podcast => {
   }
 }
 
+const processImage = async image => {
+  return new Promise(async (resolve, reject) => {
+    if (!image || !image.url) {
+      resolve(null)
+
+      return
+    }
+
+    const response = await fetch(image.url)
+    const content = await response.buffer()
+
+    resolve({
+      url: image.url,
+      base64: content.toString("base64"),
+    })
+  })
+}
 
 function isIterable(obj) {
   // checks for null and undefined
